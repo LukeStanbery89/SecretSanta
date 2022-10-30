@@ -1,2 +1,2 @@
-# SecretSanta
-A simple secret santa app
+# Secret Santa
+A simple secret santa app.
