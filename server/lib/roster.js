@@ -1,8 +1,8 @@
 const assert = require('node:assert');
 const { sendSMS } = require("./sms");
 
-async function handleRosterSubmission(params) {
-    await _validate(params)
+function handleRosterSubmission(params) {
+    return _validate(params)
         .then(_formatPhoneNumbers)
         .then(_assignSecretSantas)
         .then(_dispatchAssignmentMessages)
@@ -11,7 +11,6 @@ async function handleRosterSubmission(params) {
 function _validate(params) {
     const {res, roster} = params;
     return new Promise((resolve, reject) => {
-        // TODO
         const schema = {
             name: 'string',
             phoneNumber: new RegExp('[0-9]{3}-[0-9]{3}-[0-9]{4}'),
@@ -48,7 +47,7 @@ function _validate(params) {
 function _formatPhoneNumbers(params) {
     const {roster} = params;
     return new Promise((resolve, reject) => {
-        const formattedRoster = roster.map(p => {
+        const phoneFormattedRoster = roster.map(p => {
             return {
                 ...p,
                 phoneNumber: `+1${p.phoneNumber.replaceAll('-','')}`,
@@ -56,7 +55,7 @@ function _formatPhoneNumbers(params) {
         });
         resolve({
             ...params,
-            roster: formattedRoster,
+            roster: phoneFormattedRoster,
         });
     })
 }
@@ -76,7 +75,6 @@ function _assignSecretSantas(params) {
 function _dispatchAssignmentMessages(params) {
     const {roster} = params;
     return new Promise((resolve, reject) => {
-        // TODO: Ensure that this function is async-safe
         roster.map(async participant => await sendSMS(_constructSMSMessage(participant)));
         resolve(params);
     })
