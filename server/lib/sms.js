@@ -16,7 +16,7 @@ async function sendSMS(params) {
     console.log('SMS message: ', message);
     if (process.env.SMS_ENABLED === true || process.env.SMS_ENABLED === 'true') {
         console.log('Sending SMS...');
-        return client.messages 
+        return client.messages
             .create(message)
             .then(message => console.log(message.sid));
     }
