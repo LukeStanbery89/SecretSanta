@@ -1,3 +1,5 @@
+'use strict';
+
 require('dotenv').config();
 const express = require('express');
 const app = express();
@@ -9,7 +11,7 @@ app.use(express.json());
 app.post('/api/submit-roster', async (req, res) => {
     const roster = req.body;
     await handleRosterSubmission({req, res, roster});
-    res.json({ message: "Received!" });
+    res.json({ message: 'Received!' });
 });
 
 app.listen(port, () => {

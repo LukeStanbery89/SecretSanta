@@ -1,11 +1,13 @@
+'use strict';
+
 const assert = require('node:assert');
-const { sendSMS } = require("./sms");
+const { sendSMS } = require('./sms');
 
 function handleRosterSubmission(params) {
     return _validate(params)
         .then(_formatPhoneNumbers)
         .then(_assignSecretSantas)
-        .then(_dispatchAssignmentMessages)
+        .then(_dispatchAssignmentMessages);
 }
 
 function _validate(params) {
@@ -20,12 +22,12 @@ function _validate(params) {
                 try {
                     assert(p[key]);
                     switch(value.constructor.name) {
-                        case 'RegExp':
-                            assert(value.test(p[key]));
-                            break;
-                        default:
-                            assert(typeof p[key] === value);
-                            break;
+                    case 'RegExp':
+                        assert(value.test(p[key]));
+                        break;
+                    default:
+                        assert(typeof p[key] === value);
+                        break;
                     }
                 } catch (e) {
                     console.error({
@@ -46,7 +48,7 @@ function _validate(params) {
 
 function _formatPhoneNumbers(params) {
     const {roster} = params;
-    return new Promise((resolve, reject) => {
+    return new Promise((resolve) => {
         const phoneFormattedRoster = roster.map(p => {
             return {
                 ...p,
@@ -57,27 +59,27 @@ function _formatPhoneNumbers(params) {
             ...params,
             roster: phoneFormattedRoster,
         });
-    })
+    });
 }
 
 function _assignSecretSantas(params) {
     const {roster} = params;
-    return new Promise((resolve, reject) => {
+    return new Promise((resolve) => {
         // TODO
         let rosterWithSecretSantas = [...roster];
         resolve({
             ...params,
             roster: rosterWithSecretSantas,
         });
-    })
+    });
 }
 
 function _dispatchAssignmentMessages(params) {
     const {roster} = params;
-    return new Promise((resolve, reject) => {
+    return new Promise((resolve) => {
         roster.map(async participant => await sendSMS(_constructSMSMessage(participant)));
         resolve(params);
-    })
+    });
 }
 
 function _constructSMSMessage(participant) {
@@ -89,4 +91,4 @@ function _constructSMSMessage(participant) {
 
 module.exports = {
     handleRosterSubmission,
-}
+};

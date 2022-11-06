@@ -1,8 +1,7 @@
-import { useState } from 'react';
+import React, { useState } from 'react';
 import 'bootstrap/dist/css/bootstrap.css';
 import NewParticipantForm from './components/NewParticipantForm';
 import RosterTable from './components/RosterTable';
-
 
 function App() {
     const [roster, setRoster] = useState([]);
@@ -60,7 +59,7 @@ function App() {
             </div>
             <hr />
             <div className="mb-3">
-                <button type="button" className="btn btn-primary" onClick={submitRoster} disabled={!(!!roster.length)}>Submit Roster</button>
+                <button type="button" className="btn btn-primary" onClick={submitRoster} disabled={!(roster.length)}>Submit Roster</button>
             </div>
         </div>
     );
