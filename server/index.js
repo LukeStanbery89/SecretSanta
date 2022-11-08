@@ -8,10 +8,15 @@ const { handleRosterSubmission } = require('./lib/roster');
 
 app.use(express.json());
 
-app.post('/api/submit-roster', async (req, res) => {
+app.post('/api/submit-roster', (req, res) => {
     const roster = req.body;
-    await handleRosterSubmission({req, res, roster});
-    res.json({ message: 'Received!' });
+    handleRosterSubmission({req, res, roster})
+        .then(() => {
+            res.json({ message: 'Received!' });
+        })
+        .catch((error) => {
+            console.error('[ERROR]', error);
+        });
 });
 
 app.listen(port, () => {

@@ -37,12 +37,12 @@ function App() {
             body: JSON.stringify(roster),
         })
             .then(res => res.json())
-            .then(data => console.log(data.message));
+            .then(data => console.log(data.message))
+            .catch(error => console.error(error));
     }
 
     function newParticipantIsInvalid() {
-        
-        
+        // TODO
         return false;
     }
 
