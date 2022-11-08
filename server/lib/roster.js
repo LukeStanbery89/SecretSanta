@@ -130,6 +130,7 @@ function _assignSecretSantas(params) {
 
 function _dispatchAssignmentMessages(params) {
     const {roster} = params;
+    console.log('================================================================');
     return new Promise((resolve) => {
         roster.map(async participant => await sendSMS(_constructSMSMessage(participant)));
         resolve(params);
