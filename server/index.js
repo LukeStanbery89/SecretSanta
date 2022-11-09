@@ -12,7 +12,7 @@ app.post('/api/submit-roster', (req, res) => {
     const roster = req.body;
     handleRosterSubmission({req, res, roster})
         .then(() => {
-            res.json({ message: 'Received!' });
+            res.json({ message: 'Success!' });
         })
         .catch((error) => {
             console.error('[ERROR]', error);

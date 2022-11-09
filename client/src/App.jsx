@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import 'bootstrap/dist/css/bootstrap.css';
 import NewParticipantForm from './components/NewParticipantForm';
 import RosterTable from './components/RosterTable';
+import './App.css';
 
 function App() {
     const [roster, setRoster] = useState([]);

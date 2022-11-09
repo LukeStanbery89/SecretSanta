@@ -1,4 +1,5 @@
 import React from 'react';
+import PropTypes from 'prop-types';
 
 const phoneFormat = '[0-9]{3}-[0-9]{3}-[0-9]{4}';
 
@@ -23,9 +24,9 @@ function NewParticipantForm(props) {
 }
 
 NewParticipantForm.propTypes = {
-    addParticipant: Function,
-    setName: Function,
-    setPhoneNumber: Function,
+    addParticipant: PropTypes.func,
+    setName: PropTypes.func,
+    setPhoneNumber: PropTypes.func,
 };
 
 export default NewParticipantForm;

@@ -1,14 +1,14 @@
 'use strict';
 
 const assert = require('node:assert');
-const { shuffle } = require('../utils/data-utils');
+const _ = require('lodash');
 const { sendSMS } = require('./sms');
 
 function handleRosterSubmission(params) {
     return _validate(params)
         .then(_formatPhoneNumbers)
         .then(_assignSecretSantas)
-        .then(_dispatchAssignmentMessages);
+        .then(_dispatchAssignmentNotifications);
 }
 
 function _validate(params) {
@@ -99,36 +99,54 @@ function _formatPhoneNumbers(params) {
 function _assignSecretSantas(params) {
     const {roster} = params;
     return new Promise((resolve) => {
-        /**
-         * The secret santa assignment algorithm works like this...
-         *
-         * 1. Create a copy of the original roster (to avoid mutation).
-         * 2. Shuffle the copy. This is where we get our randomness from.
-         * 3. Iterate over the shuffled copy and assign shuffledRoster[n + 1]
-         *    to shuffledRoster[n]. This ensures that no recipient is
-         *    assigned to themself, no one is assigned twice, and no one
-         *    gives and receives with the same person.
-         *
-         * TODO: Integrate blacklist functionality so that gifters are not
-         * assigned recipients they are not supposed to receive. This is
-         * good, for example, for couples who intend to give each other gifts
-         * independently of secret santa.
-         */
-        let shuffledRoster = shuffle([...roster]);
-        let rosterWithSecretSantas = shuffledRoster.map((participant, i) => {
-            return {
-                ...participant,
-                secretSanta: shuffledRoster[i + 1] ? shuffledRoster[i + 1] : shuffledRoster[0],
-            };
-        });
         resolve({
             ...params,
-            roster: rosterWithSecretSantas,
+            roster: _generateSecretSantaAssignments(roster),
         });
     });
 }
 
-function _dispatchAssignmentMessages(params) {
+function _generateSecretSantaAssignments(roster) {
+    /**
+     * The secret santa assignment algorithm works like this...
+     *
+     * 1. Create a copy of the original roster (to avoid mutation).
+     * 2. Shuffle the copy. This is where we get our randomness from.
+     * 3. Iterate over the shuffled copy and assign shuffledRoster[n + 1]
+     *    to shuffledRoster[n]. This ensures that no recipient is
+     *    assigned to themself, no one is assigned twice, and no one
+     *    gives and receives with the same person.
+     *
+     * TODO: Integrate blacklist functionality so that gifters are not
+     * assigned recipients they are not supposed to receive. This is
+     * good, for example, for couples who intend to give each other gifts
+     * independently of secret santa.
+     */
+    let shuffledRoster = _.shuffle([...roster]);
+    let rosterWithSecretSantas = shuffledRoster.map((participant, i) => {
+        return {
+            ...participant,
+            secretSanta: shuffledRoster[i + 1] ? shuffledRoster[i + 1] : shuffledRoster[0],
+        };
+    });
+
+    const result = _rosterViolatesBlacklistRestrictions(rosterWithSecretSantas);
+    if (result) {
+        return _generateSecretSantaAssignments(roster);
+    } else {
+        return rosterWithSecretSantas;
+    }
+}
+
+function _rosterViolatesBlacklistRestrictions(roster) {
+    return _.find(roster, p => {
+        return _.find(p.blacklist, bl => {
+            return bl.name === p.secretSanta.name;
+        });
+    });
+}
+
+function _dispatchAssignmentNotifications(params) {
     const {roster} = params;
     console.log('================================================================');
     return new Promise((resolve) => {
