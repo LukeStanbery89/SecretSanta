@@ -51,16 +51,20 @@ function App() {
         <div className="container">
             <h1>Secret Santa</h1>
             <hr />
-            <h2>Add Participant</h2>
-            <NewParticipantForm addParticipant={addParticipant} setName={setName} setPhoneNumber={setPhoneNumber} />
-            <hr />
-            <div className="mb-3">
-                <h2>Participants</h2>
-                <RosterTable roster={roster} removeParticipant={removeParticipant} />
-            </div>
-            <hr />
-            <div className="mb-3">
-                <button type="button" className="btn btn-primary" onClick={submitRoster} disabled={!(roster.length)}>Submit Roster</button>
+            <div className="row">
+                <div className="col-lg-5">
+                    <h2>Add Participant</h2>
+                    <NewParticipantForm addParticipant={addParticipant} setName={setName} setPhoneNumber={setPhoneNumber} />
+                </div>
+                <div className="col-lg-7">
+                    <div className="mb-3">
+                        <h2>Participants</h2>
+                        <RosterTable roster={roster} removeParticipant={removeParticipant} />
+                    </div>
+                    <div className="mb-3">
+                        <button type="button" className="btn btn-primary" onClick={submitRoster} disabled={!(roster.length)}>Submit Roster</button>
+                    </div>
+                </div>
             </div>
         </div>
     );
