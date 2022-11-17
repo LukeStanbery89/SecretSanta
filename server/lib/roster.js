@@ -35,23 +35,23 @@ function _validateSchema(roster, res, reject) {
         name: 'string',
         phoneNumber: new RegExp('[0-9]{3}-[0-9]{3}-[0-9]{4}'),
     };
-    roster.map(p => {
+    roster.map(participant => {
         for (const [key, value] of Object.entries(schema)) {
             try {
-                assert(p[key]);
+                assert(participant[key]);
                 switch (value.constructor.name) {
                 case 'RegExp':
-                    assert(value.test(p[key]));
+                    assert(value.test(participant[key]));
                     break;
                 default:
-                    assert(typeof p[key] === value);
+                    assert(typeof participant[key] === value);
                     break;
                 }
             } catch (e) {
                 console.error({
                     key,
                     format: value,
-                    value: p[key],
+                    value: participant[key],
                     error: e,
                 });
                 res.statusMessage = 'Invalid input schema';
@@ -84,10 +84,10 @@ function _validateNoDuplicatePhoneNumbers(roster, res, reject) {
 function _formatPhoneNumbers(params) {
     const {roster} = params;
     return new Promise((resolve) => {
-        const phoneFormattedRoster = roster.map(p => {
+        const phoneFormattedRoster = roster.map(participant => {
             return {
-                ...p,
-                phoneNumber: `+1${p.phoneNumber.replaceAll('-','')}`,
+                ...participant,
+                phoneNumber: `+1${participant.phoneNumber.replaceAll('-','')}`,
             };
         });
         resolve({
@@ -129,8 +129,7 @@ function _generateSecretSantaAssignments(roster) {
         };
     });
 
-    const result = _rosterViolatesBlacklistRestrictions(rosterWithSecretSantas);
-    if (result) {
+    if (_rosterViolatesBlacklistRestrictions(rosterWithSecretSantas)) {
         return _generateSecretSantaAssignments(roster);
     } else {
         return rosterWithSecretSantas;
