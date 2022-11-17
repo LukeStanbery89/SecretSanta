@@ -11,6 +11,7 @@ function handleRosterSubmission(params) {
         .then(_dispatchAssignmentNotifications);
 }
 
+// TODO: Add validation to ensure that the entire roster is not blacklisted.
 function _validate(params) {
     const {res, roster} = params;
     return new Promise((resolve, reject) => {
@@ -112,15 +113,13 @@ function _generateSecretSantaAssignments(roster) {
      *
      * 1. Create a copy of the original roster (to avoid mutation).
      * 2. Shuffle the copy. This is where we get our randomness from.
-     * 3. Iterate over the shuffled copy and assign shuffledRoster[n + 1]
+     * 3. Iterate over the shuffled copy and assign shuffledRoster[n+1]
      *    to shuffledRoster[n]. This ensures that no recipient is
      *    assigned to themself, no one is assigned twice, and no one
      *    gives and receives with the same person.
-     *
-     * TODO: Integrate blacklist functionality so that gifters are not
-     * assigned recipients they are not supposed to receive. This is
-     * good, for example, for couples who intend to give each other gifts
-     * independently of secret santa.
+     * 4. Validate that the secret santa assignments do not violate the
+     *    blacklist. If there are blacklist violations, recursively
+     *    rerun the algorithm until we have an adherant roster.
      */
     let shuffledRoster = _.shuffle([...roster]);
     let rosterWithSecretSantas = shuffledRoster.map((participant, i) => {
