@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import 'bootstrap/dist/css/bootstrap.css';
 import NewParticipantForm from './components/NewParticipantForm';
 import RosterTable from './components/RosterTable';
@@ -21,7 +21,11 @@ function App() {
             name,
             phoneNumber,
         });
+
         setRoster(updatedRoster);
+
+        document.getElementById('name').value = '';
+        document.getElementById('phone-number').value = '';
     }
 
     function removeParticipant(index) {
@@ -38,7 +42,7 @@ function App() {
             body: JSON.stringify(roster),
         })
             .then(res => res.json())
-            .then(data => console.log(data.message))
+            .then(data => alert(data.message))
             .catch(error => console.error(error));
     }
 
@@ -46,6 +50,18 @@ function App() {
         // TODO
         return false;
     }
+
+    function handleTextAreaChange(event) {
+        try {
+            setRoster(JSON.parse(event.target.value || '[]'));
+        } catch (e) {
+            alert('Invalid JSON!');
+        }
+    }
+
+    useEffect(() => {
+        document.getElementById('roster-json').value = JSON.stringify(roster);
+    }, [roster]);
 
     return (
         <div className="container">
@@ -59,10 +75,17 @@ function App() {
                 <div className="col-lg-7">
                     <div className="mb-3">
                         <h2>Participants</h2>
-                        <RosterTable roster={roster} removeParticipant={removeParticipant} />
+                        <RosterTable roster={roster} setRoster={setRoster} removeParticipant={removeParticipant} />
                     </div>
                     <div className="mb-3">
                         <button type="button" className="btn btn-primary" onClick={submitRoster} disabled={!(roster.length)}>Submit Roster</button>
+                    </div>
+                </div>
+            </div>
+            <div className="row">
+                <div className="col-xs-12">
+                    <div className="mb-3">
+                        <textarea name="roster-json" id="roster-json" cols="100" rows="10" defaultValue={JSON.stringify(roster)} onBlur={handleTextAreaChange} style={{width:'100%'}}></textarea>
                     </div>
                 </div>
             </div>

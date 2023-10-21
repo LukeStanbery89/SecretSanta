@@ -1,12 +1,20 @@
 import React from 'react';
 import BlacklistSelect from './BlacklistSelect';
+import { isRosterEntriesEqual } from '../utils';
 
 function RosterTable(props) {
-    const { roster, removeParticipant } = props;
+    const { roster, setRoster, removeParticipant } = props;
     let rosterTable;
 
     function setBlacklist(giver, blacklist = []) {
-        giver.blacklist = blacklist;
+        for (let i = 0; i < roster.length; i++) {
+            if (isRosterEntriesEqual(giver, roster[i])) {
+                let newRoster = structuredClone(roster);
+                newRoster[i].blacklist = blacklist;
+                setRoster(newRoster);
+                return;
+            }
+        }
     }
 
     if (roster.length) {
@@ -26,8 +34,9 @@ function RosterTable(props) {
                         <td>{participant.phoneNumber}</td>
                         <td>
                             <BlacklistSelect
-                                roster={roster.filter(p => p !== participant)}
+                                roster={roster}
                                 giver={participant}
+                                setRoster={setRoster}
                                 setBlacklist={setBlacklist} />
                         </td>
                         <td>
