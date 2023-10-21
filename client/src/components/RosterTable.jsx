@@ -26,7 +26,7 @@ function RosterTable(props) {
                         <td>{participant.phoneNumber}</td>
                         <td>
                             <BlacklistSelect
-                                roster={roster.filter(p => p !== participant)}
+                                roster={roster}
                                 giver={participant}
                                 setBlacklist={setBlacklist} />
                         </td>

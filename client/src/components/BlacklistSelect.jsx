@@ -14,7 +14,9 @@ function BlacklistSelect(props) {
         <select onChange={handleChange} multiple>
             <option value="">N/A</option>
             {roster.map((receiver, i) => {
-                return (<option key={i} value={JSON.stringify(receiver)}>{receiver.name}</option>);
+                if (receiver != giver) {
+                    return (<option key={i} value={JSON.stringify(receiver)}>{receiver.name}</option>);
+                }
             })}
         </select>
     );
