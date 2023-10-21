@@ -21,7 +21,11 @@ function App() {
             name,
             phoneNumber,
         });
+
         setRoster(updatedRoster);
+
+        document.getElementById('name').value = '';
+        document.getElementById('phone-number').value = '';
     }
 
     function removeParticipant(index) {
@@ -38,7 +42,7 @@ function App() {
             body: JSON.stringify(roster),
         })
             .then(res => res.json())
-            .then(data => console.log(data.message))
+            .then(data => alert(data.message))
             .catch(error => console.error(error));
     }
 
@@ -81,7 +85,7 @@ function App() {
             <div className="row">
                 <div className="col-xs-12">
                     <div className="mb-3">
-                        <textarea name="roster-json" id="roster-json" cols="100" rows="10" defaultValue={JSON.stringify(roster)} onBlur={handleTextAreaChange}></textarea>
+                        <textarea name="roster-json" id="roster-json" cols="100" rows="10" defaultValue={JSON.stringify(roster)} onBlur={handleTextAreaChange} style={{width:'100%'}}></textarea>
                     </div>
                 </div>
             </div>
