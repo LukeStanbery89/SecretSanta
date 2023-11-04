@@ -23,5 +23,8 @@
     "homepage": "https://github.com/LukeStanbery89/secret-santa#readme",
     "devDependencies": {
         "concurrently": "^7.5.0"
+    },
+    "dependencies": {
+        "@vonage/server-sdk": "^3.10.0"
     }
 }

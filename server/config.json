@@ -1,0 +1,5 @@
+{
+    "ALLOW_DUPLICATE_PHONE_NUMBERS": true,
+    "SMS_ENABLED": true,
+    "SMS_PROVIDER": "vonage"
+}

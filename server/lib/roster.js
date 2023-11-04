@@ -2,7 +2,8 @@
 
 const assert = require('node:assert');
 const _ = require('lodash');
-const { sendSMS } = require('./sms');
+const { sendSMS } = require('../services/sms');
+const config = require('./config');
 
 function handleRosterSubmission(params) {
     return _validate(params)
@@ -63,7 +64,7 @@ function _validateSchema(roster, res, reject) {
 }
 
 function _validateNoDuplicatePhoneNumbers(roster, res, reject) {
-    if (process.env.ALLOW_DUPLICATE_PHONE_NUMBERS === true || process.env.ALLOW_DUPLICATE_PHONE_NUMBERS === 'true') {
+    if (config.get('ALLOW_DUPLICATE_PHONE_NUMBERS')) {
         return;
     }
     let phoneMap = {};
