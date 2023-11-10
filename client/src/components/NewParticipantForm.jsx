@@ -1,10 +1,8 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 
-const phoneFormat = '[0-9]{3}-[0-9]{3}-[0-9]{4}';
-
 function NewParticipantForm(props) {
-    const { addParticipant, setName, setPhoneNumber } = props;
+    const { addParticipant, setName, setEmail } = props;
 
     return (
         <form onSubmit={addParticipant}>
@@ -13,8 +11,8 @@ function NewParticipantForm(props) {
                 <input type='text' className="form-control" id="name" placeholder='John Doe' onInput={event => setName(event.target.value)} required />
             </div>
             <div className="mb-3">
-                <label htmlFor="phone-number" className="form-label">Phone Number (format: 555-555-555)</label>
-                <input type="tel" className="form-control" id="phone-number" placeholder="555-555-5555" pattern={phoneFormat} onChange={event => {setPhoneNumber(event.target.value);}} required />
+                <label htmlFor="email-address" className="form-label">Email</label>
+                <input type="email" className="form-control" id="email-address" placeholder="name@example.com" onChange={event => {setEmail(event.target.value);}} required />
             </div>
             <div className="mb-3">
                 <button type="submit" className="btn btn-secondary">Add Participant</button>
@@ -26,7 +24,7 @@ function NewParticipantForm(props) {
 NewParticipantForm.propTypes = {
     addParticipant: PropTypes.func,
     setName: PropTypes.func,
-    setPhoneNumber: PropTypes.func,
+    setEmail: PropTypes.func,
 };
 
 export default NewParticipantForm;

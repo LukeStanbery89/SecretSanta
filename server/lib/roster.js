@@ -2,12 +2,13 @@
 
 const assert = require('node:assert');
 const _ = require('lodash');
-const { sendSMS } = require('../services/sms');
+// const { sendSMS } = require('../services/sms');
+const { sendEmail } = require('../services/email');
 const config = require('./config');
+const emailValidator = require('email-validator');
 
 function handleRosterSubmission(params) {
     return _validate(params)
-        .then(_formatPhoneNumbers)
         .then(_assignSecretSantas)
         .then(_dispatchAssignmentNotifications);
 }
@@ -18,7 +19,7 @@ function _validate(params) {
     return new Promise((resolve, reject) => {
         _validateRosterSize(roster, res, reject);
         _validateSchema(roster, res, reject);
-        _validateNoDuplicatePhoneNumbers(roster, res, reject);
+        _validateNoDuplicateEmailAddresses(roster, res, reject);
         resolve(params);
     });
 }
@@ -34,19 +35,18 @@ function _validateRosterSize(roster, res, reject) {
 function _validateSchema(roster, res, reject) {
     const schema = {
         name: 'string',
-        phoneNumber: new RegExp('[0-9]{3}-[0-9]{3}-[0-9]{4}'),
+        emailAddress: emailValidator,
     };
     roster.map(participant => {
         for (const [key, value] of Object.entries(schema)) {
             try {
                 assert(participant[key]);
-                switch (value.constructor.name) {
-                case 'RegExp':
+                if (value.constructor.name === 'RegExp') {
                     assert(value.test(participant[key]));
-                    break;
-                default:
+                } else if (key === 'emailAddress') {
+                    assert(value.validate(participant[key]));
+                } else {
                     assert(typeof participant[key] === value);
-                    break;
                 }
             } catch (e) {
                 console.error({
@@ -63,38 +63,22 @@ function _validateSchema(roster, res, reject) {
     });
 }
 
-function _validateNoDuplicatePhoneNumbers(roster, res, reject) {
-    if (config.get('ALLOW_DUPLICATE_PHONE_NUMBERS')) {
+function _validateNoDuplicateEmailAddresses(roster, res, reject) {
+    if (config.get('ALLOW_DUPLICATE_EMAIL_ADDRESSES')) {
         return;
     }
-    let phoneMap = {};
+    let emailAddressMap = {};
     roster.map(participant => {
-        if (phoneMap[participant.phoneNumber]) {
-            phoneMap[participant.phoneNumber]++;
-            if (phoneMap[participant.phoneNumber] > 1) {
-                res.statusMessage = 'Duplicate phone numbers';
+        if (emailAddressMap[participant.emailAddress]) {
+            emailAddressMap[participant.emailAddress]++;
+            if (emailAddressMap[participant.emailAddress] > 1) {
+                res.statusMessage = 'Duplicate email addresses';
                 res.status(400).end();
-                reject('Duplicate phone numbers');
+                reject('Duplicate email addresses');
             }
         } else {
-            phoneMap[participant.phoneNumber] = 1;
+            emailAddressMap[participant.emailAddress] = 1;
         }
-    });
-}
-
-function _formatPhoneNumbers(params) {
-    const {roster} = params;
-    return new Promise((resolve) => {
-        const phoneFormattedRoster = roster.map(participant => {
-            return {
-                ...participant,
-                phoneNumber: `+1${participant.phoneNumber.replaceAll('-','')}`,
-            };
-        });
-        resolve({
-            ...params,
-            roster: phoneFormattedRoster,
-        });
     });
 }
 
@@ -149,15 +133,25 @@ function _dispatchAssignmentNotifications(params) {
     const {roster} = params;
     console.log('================================================================');
     return new Promise((resolve) => {
-        roster.map(async participant => await sendSMS(_constructSMSMessage(participant)));
+        // roster.map(async participant => await sendSMS(_constructSMSMessage(participant)));
+        roster.map(async participant => await sendEmail(_constructEmailMessage(participant)));
         resolve(params);
     });
 }
 
-function _constructSMSMessage(participant) {
+// function _constructSMSMessage(participant) {
+//     return {
+//         to: participant.emailAddress,
+//         body: `Hi, ${participant.name}! Welcome to SECRET SANTA! Your secret santa recipient is...\n\n${participant.secretSanta.name}`,
+//     };
+// }
+
+function _constructEmailMessage(participant) {
     return {
-        to: participant.phoneNumber,
-        body: `Hi, ${participant.name}! Welcome to SECRET SANTA! Your secret santa recipient is...\n\n${participant.secretSanta.name}`,
+        from: `${config.get('MAIL_USERNAME')}@gmail.com`,
+        to: participant.emailAddress,
+        subject: 'Your Secret Santa Assignment...',
+        text: `Hi, ${participant.name}!\n\nWelcome to SECRET SANTA! Your secret santa recipient is...\n\n${participant.secretSanta.name}`,
     };
 }
 

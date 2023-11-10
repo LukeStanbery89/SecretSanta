@@ -7,7 +7,7 @@ import './App.css';
 function App() {
     const [roster, setRoster] = useState([]);
     const [name, setName] = useState(null);
-    const [phoneNumber, setPhoneNumber] = useState(null);
+    const [emailAddress, setEmailAddress] = useState(null);
 
     function addParticipant(event) {
         event.preventDefault();
@@ -19,13 +19,13 @@ function App() {
         let updatedRoster = [...roster];
         updatedRoster.push({
             name,
-            phoneNumber,
+            emailAddress,
         });
 
         setRoster(updatedRoster);
 
         document.getElementById('name').value = '';
-        document.getElementById('phone-number').value = '';
+        document.getElementById('email-address').value = '';
     }
 
     function removeParticipant(index) {
@@ -70,7 +70,7 @@ function App() {
             <div className="row">
                 <div className="col-lg-5">
                     <h2>Add Participant</h2>
-                    <NewParticipantForm addParticipant={addParticipant} setName={setName} setPhoneNumber={setPhoneNumber} />
+                    <NewParticipantForm addParticipant={addParticipant} setName={setName} setEmail={setEmailAddress} />
                 </div>
                 <div className="col-lg-7">
                     <div className="mb-3">

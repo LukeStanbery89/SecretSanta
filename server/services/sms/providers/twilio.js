@@ -17,7 +17,7 @@ async function sendSMS(params) {
         to: params.to,
     };
 
-    if (config.get('SMS_ENABLED') === true) {
+    if (config.get('SEND_SMS_ENABLED')) {
         console.log(`Sending SMS to ${message.to}...`);
         return client.messages
             .create(message)
