@@ -19,7 +19,7 @@ async function sendSMS(params) {
         text: params.body,
     };
 
-    if (config.get('SMS_ENABLED') === true) {
+    if (config.get('SEND_MAIL_ENABLED')) {
         await vonage.sms.send(message)
             .then(resp => { console.log('Message sent successfully'); console.log(resp); })
             .catch(err => { console.log('There was an error sending the messages.'); console.error(err); });

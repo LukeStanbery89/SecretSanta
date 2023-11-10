@@ -22,7 +22,7 @@ function RosterTable(props) {
             <thead>
                 <tr>
                     <th>Name</th>
-                    <th>Phone Number</th>
+                    <th>Email</th>
                     <th>Blacklist</th>
                     <th>Delete</th>
                 </tr>
@@ -31,7 +31,7 @@ function RosterTable(props) {
                 {roster.map(
                     (participant, index) => <tr key={`row-${index}`}>
                         <td>{participant.name}</td>
-                        <td>{participant.phoneNumber}</td>
+                        <td>{participant.emailAddress}</td>
                         <td>
                             <BlacklistSelect
                                 roster={roster}
